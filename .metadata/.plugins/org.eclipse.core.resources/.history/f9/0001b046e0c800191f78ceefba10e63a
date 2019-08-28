@@ -1,0 +1,142 @@
+package pajeObjects.homePage;
+
+import java.util.ArrayList;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import com.myproject.basepageobject.BasePageObject;
+
+import myntraRepository.MyntraRepository;
+
+/**
+ * Page object for search page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class CheckoutPagePajeObject {
+
+	// Driver
+	public WebDriver driver;
+
+	// Declare page objects
+	BasePageObject basePageObject;
+
+	// Declare repository objects
+	MyntraRepository myntraRepository;
+
+	// Declare dynamic locator list
+	ArrayList<String> dynamicLocatorList;
+
+	// Label name to be used in modules
+	public static String LABEL_BRAND = "Brand";
+	public static String LABEL_COLOR = "Color";
+	public static String LABEL_FILTER_SIZE = "Size";
+
+	public CheckoutPagePajeObject(WebDriver driver){
+		basePageObject = new BasePageObject(driver);
+		myntraRepository = new MyntraRepository(driver);
+	}
+
+	public void applyFliters(String brandName, String color, String size) throws Exception{
+
+		if(!brandName.isEmpty()){
+
+			basePageObject.click(basePageObject.getWebElementWithDynamicXpath(myntraRepository.searchIconXpath, LABEL_BRAND));
+
+			// Set Text
+			basePageObject.clearAndSetText(basePageObject.getWebElementWithDynamicXpath(myntraRepository.brandnColorTextBoxXpath, LABEL_BRAND), brandName);
+
+			WebElement checkBoxElement = basePageObject.getWebElementWithDynamicXpath(myntraRepository.brandNameCheckBoxXpath, brandName);
+			basePageObject.click(checkBoxElement);
+
+			Thread.sleep(5000);
+		}
+
+		if (!color.isEmpty()){
+
+			if(basePageObject.isElementPresent(myntraRepository.colorMoreItemExistsXpath, "")){
+				basePageObject.click(basePageObject.getWebElementWithDynamicXpath(myntraRepository.searchIconXpath, LABEL_COLOR));
+				// Set Text
+				basePageObject.clearAndSetText(basePageObject.getWebElementWithDynamicXpath(myntraRepository.brandnColorTextBoxXpath, LABEL_COLOR), color);
+			}
+
+			WebElement checkBoxElement = basePageObject.getWebElementWithDynamicXpath(myntraRepository.colorNameCheckBoxXpath, color);
+			basePageObject.click(checkBoxElement);
+
+			basePageObject.waitForPageToLoad();
+		}
+
+		if (!size.isEmpty()){
+
+			// Check size filter present in UI
+			boolean isSizeFilterPresent = basePageObject.isElementPresent(myntraRepository.filterLabelXpath, LABEL_FILTER_SIZE);
+			
+			if(isSizeFilterPresent){
+				
+				// Click on Size filter label
+				selectFilterAndValue(size);
+			}
+			else if(basePageObject.isElementPresent(myntraRepository.moreFilterLabelXpath, "")){
+				
+				// Click on more
+				basePageObject.click(myntraRepository.moreFilterLabel);
+				
+				// Click on size filter label
+				selectFilterAndValue(size);
+			}
+		}
+	}
+		
+	
+	private void selectFilterAndValue(String filterValueToSelect) throws Exception{
+		// Click on size filter label
+		basePageObject.click(basePageObject.getWebElementWithDynamicXpath(myntraRepository.filterLabelXpath, LABEL_FILTER_SIZE));
+		
+		// Select size
+		basePageObject.click(basePageObject.getWebElementWithDynamicXpath(myntraRepository.filterOptionSelectionCheckboxXpath, filterValueToSelect));
+		
+		Thread.sleep(5000);
+	}
+	
+	public void addItemToBag(String size){
+		
+		// Move mouse to item
+		basePageObject.mouseHoverOnElement(myntraRepository.productXpath, "");
+		
+		// Wait for 'Add to bag button visibility' and click
+		basePageObject.waitForElementVisibility(myntraRepository.addToBagButton);
+		basePageObject.click(myntraRepository.addToBagButton);
+		
+		// Wait for 'Select a size' pane vidibility and select
+		basePageObject.waitForElementVisibility(myntraRepository.selectASizePane);
+		basePageObject.click(basePageObject.getWebElementWithDynamicXpath(myntraRepository.addToBagSizeSelectionXpath,size));
+	}
+	
+	public boolean isAddedToBagToastMsgPresent(){
+		
+		basePageObject.waitForElementVisibility(myntraRepository.addedToBagToastMsg);
+		
+		return basePageObject.isElementPresent(myntraRepository.addedToBagToastMsgXpath, "");
+	}
+	
+	public String verifyBagCounterUpdated() throws Exception{
+		basePageObject.waitForElementVisibility(myntraRepository.bagCounter);
+		
+		String counterText = basePageObject.getText(myntraRepository.bagCounterXpath);
+		System.out.println("Counter Value : " +counterText);
+		return counterText;
+	}
+	
+	public void clickOnCheckOutCartIcon(){
+		
+		basePageObject.click(myntraRepository.bagIcon);
+		
+		// wait for page to load
+		basePageObject.waitForPageToLoad();
+		
+		// Check checkout page loaded
+		basePageObject.waitForElementVisibility(myntraRepository.myShoppingBag);
+	}
+}

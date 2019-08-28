@@ -1,0 +1,17 @@
+package pajeObjects.homePage;
+
+import org.openqa.selenium.WebDriver;
+
+import com.myproject.basepageobject.BasePageObject;
+
+/**
+ * Page object for home page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class HomePage {
+
+	// Declare page objects
+	BasePageObject basePageObject;
+}

@@ -1,0 +1,62 @@
+package pajeObjects.homePage;
+
+import java.util.ArrayList;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.myproject.basepageobject.BasePageObject;
+import com.myproject.tutorial.log4j.Log4jLogger;
+
+import myntraRepository.MyntraRepository;
+
+/**
+ * Page object for home page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class HomePage {
+
+	// Driver
+    public WebDriver driver;
+    
+	// Declare page objects
+	BasePageObject basePageObject;
+	
+	// Declare repository objects
+	MyntraRepository myntraRepository;
+	
+	// Declare dynamic locator list
+    ArrayList<String> dynamicLocatorList;
+    
+    public HomePage(WebDriver driver){
+    	basePageObject = new BasePageObject(driver);
+    	myntraRepository = new MyntraRepository(driver);
+    }
+    
+    public boolean myntraHomePageLoaded(){
+    	return basePageObject.isElementPresent(myntraRepository.myntraLogoXpath, "");
+    }
+    
+    public void enterSearchText(String searchText) throws Exception{
+    	Log4jLogger.info("Enter text in search box");
+    	
+    	basePageObject.clearAndSetText(myntraRepository.searchTextBox, searchText);
+    	
+    	// Wait for search suggestion result to appear
+    	basePageObject.waitForElementVisibility(myntraRepository.searchAutoSuggestBox);
+    }
+    
+    public void selectItemFromAutoSuggestSearchBox(String itemName){
+    	Log4jLogger.info("Click on auto suggest search box item - "+itemName);
+    	
+    	WebElement itemToPerformClickOn = basePageObject.getWebElementWithDynamicXpath(myntraRepository.autoSearchItemXpath, itemName);
+    	basePageObject.click(itemToPerformClickOn);
+    }
+    
+    
+}

@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="My-Project Suite">
+	<test name="My-Project">
+		<classes>
+			<class name="com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest" />
+		</classes>
+	</test>
+</suite>

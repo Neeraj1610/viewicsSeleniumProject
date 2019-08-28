@@ -1,0 +1,99 @@
+package myntraRepository;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+import com.myproject.tutorial.log4j.Log4jLogger;
+
+/**
+ * Myntra Page repository.
+ * 
+ * @author nadhikari
+ *
+ */
+public class MyntraRepository {
+
+	// Xpath of myntra home page
+	public final String myntraLogoXpath = "//div[@id= 'desktop-headerMount']//a[@class='myntraweb-sprite desktop-logo sprites-headerLogo']";
+    public final String searchTextBoxXpath = "//div[@id= 'desktop-headerMount']//div[@class='desktop-query']/input[contains(@class,'search')]";
+	public final String searchAutoSuggestBoxXpath = searchTextBoxXpath + "/../div[contains(@class,'autoSuggest')]";
+	public final String brandnColorTextBoxXpath = "//span[text()='DYNAMIC_LOCATOR_VARIABLE']/../div[contains(@class,'search')]/input";
+	public final String searchIconXpath = "//span[text()='DYNAMIC_LOCATOR_VARIABLE']/../div[contains(@class,'search')]/span";
+	public final String colorMoreItemExistsXpath = "//span[text()='Color']/..//div[@class='colour-more']";
+	public final String moreFilterLabelXpath = "//div[@class='atsa-base']/ul[@class='atsa-filters']/li/div[@class='atsa-more']";
+	public final String productXpath = "//div[@id='desktopSearchResults']//ul[@class='results-base']/li[1]/a//div/h3";
+	public final String addToBagButtonXpath = "//div[@id='desktopSearchResults']//ul[@class='results-base']/li[1]/div[@class='product-actions ']//span[text()='Add to bag']";
+	
+	// Dynamic Xpaths for search Item
+	public final String autoSearchItemXpath = searchAutoSuggestBoxXpath + "/ul//li[text()='DYNAMIC_LOCATOR_VARIABLE']";
+	public final String brandNameCheckBoxXpath = "//span[text()='Brand']/../ul[@class='brand-list']/li//input[@value='DYNAMIC_LOCATOR_VARIABLE']/../div";
+	public final String colorNameCheckBoxXpath = "//span[text()='Color']/../ul/li[@class='colour-listItem']//input[@value='DYNAMIC_LOCATOR_VARIABLE']/../div";
+	public final String filterLabelXpath = "//div[@class='atsa-base']/ul[@class='atsa-filters']/li/label/h4[text()='DYNAMIC_LOCATOR_VARIABLE']";
+	public final String filterOptionSelectionCheckboxXpath = "//ul[@class='atsa-values']/li/label/input[@value='DYNAMIC_LOCATOR_VARIABLE']/../div";
+	
+	
+	
+	//Web elements of home page
+	@FindBy(xpath = myntraLogoXpath)
+	public WebElement myntraLogo;
+	
+	@FindBy(xpath = searchTextBoxXpath)
+	public WebElement searchTextBox;
+	
+	@FindBy(xpath = searchAutoSuggestBoxXpath)
+	public WebElement searchAutoSuggestBox;
+	
+	@FindBy(xpath = autoSearchItemXpath)
+	public WebElement autoSearchItem;
+	
+	@FindBy(xpath = brandnColorTextBoxXpath)
+	public WebElement brandnColorTextBox;
+	
+	@FindBy(xpath = searchIconXpath)
+	public WebElement searchIcon;
+	
+	@FindBy(xpath = brandNameCheckBoxXpath)
+	public WebElement brandNameCheckBox;
+	
+	@FindBy(xpath = colorNameCheckBoxXpath)
+	public WebElement colorNameCheckBox;
+	
+	@FindBy(xpath = colorMoreItemExistsXpath)
+	public WebElement colorMoreItemExists;
+	
+	@FindBy(xpath = filterLabelXpath)
+	public WebElement filterLabel;
+	
+	@FindBy(xpath = moreFilterLabelXpath)
+	public WebElement moreFilterLabel;
+	
+	@FindBy(xpath = filterOptionSelectionCheckboxXpath)
+	public WebElement filterOptionSelectionCheckbox;
+	
+	@FindBy(xpath = productXpath)
+	public WebElement product;
+	
+	@FindBy(xpath = productXpath)
+	public WebElement product;
+	
+	/**
+     * Initialize all elements in the Login page.
+     * 
+     * @param driver
+     *            The driver for the Browser that will run the application
+     */
+    public MyntraRepository(WebDriver driver) {
+
+        try {
+            // Create all 'WebElements'
+            PageFactory.initElements(driver, this);
+
+        } catch (Exception ex) {
+            // Log and throw the error
+            Log4jLogger.error(ex.getMessage());
+            throw ex;
+        }
+    }
+}

@@ -1,0 +1,162 @@
+package com.myproject.framework;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Vector;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Parameters;
+
+import com.myproject.annotation.ProjectCustomAnnotation;
+import com.myproject.file.PropertyFile;
+import com.myproject.logging.testng.TestNGListener;
+import com.myproject.tutorialSeleniumFramework.driver.DriverSetup;
+
+public class BaseTestSetup{
+
+	public ArrayList<WebDriver> appDrivers=new ArrayList<WebDriver>();
+	private ArrayList<String> appUrlFromGlobalVars=new ArrayList<String>();
+	public static HashMap<String, String> globalVariables=new HashMap<String, String>();
+	public final String CHROME_DRIVER="Chrome";
+
+	@BeforeMethod
+	@Parameters({"appBrowserType","appURL"})
+	public void initBrowser(String appBrowserType,String appURL,Method method)
+	{
+		//		Log4jLogger.info("Intialize app browser: "+appBrowserType+", with URL: "+appURL+" chat browser: "+chatBrowserType+" with URL: "+chatURL);
+		System.out.println("-- Before Method --");
+		ProjectCustomAnnotation projectCustomAnnotations=method.getAnnotation(ProjectCustomAnnotation.class);
+		globalVariables=TestNGListener.GLOBAL_VARS;
+
+		String totalAppBrowserCount=Integer.toString(projectCustomAnnotations.totalAppBrowserCount());
+		String[] appBrowserURLs=projectCustomAnnotations.appBrowserURL();
+
+		if(projectCustomAnnotations!=null)
+		{
+			if(projectCustomAnnotations.isExecuteBeforeMethodNeeded())
+			{
+				if(appBrowserType.contains(""))
+				{
+					initAppBrowser(CHROME_DRIVER, totalAppBrowserCount, appBrowserURLs);
+				}
+				else
+				{
+					initAppBrowser(appBrowserType, totalAppBrowserCount, appBrowserURLs);
+				}
+			}
+		}
+	}
+
+	@AfterMethod
+	public void tearDownDrivers(Method method)
+	{
+		appUrlFromGlobalVars.clear();
+		
+		ProjectCustomAnnotation projectCustomAnnotations=method.getAnnotation(ProjectCustomAnnotation.class);
+
+		if(projectCustomAnnotations.isExecuteAfterMethodNeeded())
+		{
+			for(WebDriver appDrivers:this.appDrivers)
+			{
+				if(isDriverActive(appDrivers))
+					appDrivers.close();
+			}
+
+			for(WebDriver chatDrivers:this.chatDrivers)
+			{
+				if(isDriverActive(chatDrivers))
+					chatDrivers.close();
+			}
+		}
+		
+		appDrivers.clear();
+		chatDrivers.clear();
+
+	}
+
+	private void initAppBrowser(String appBrowserType,String appBrowserCount,String[] appURLs)
+	{
+		DriverSetup driverSetup=new DriverSetup();
+
+		if(appURLs.length>0)
+		{
+			for(String appURL:appURLs)
+			{
+				appUrlFromGlobalVars.add(globalVariables.get(appURL));
+			}
+			for(int i=0;i<Integer.parseInt(appBrowserCount);i++)
+			{
+				appDrivers.add(driverSetup.initDriver(appBrowserType, appUrlFromGlobalVars.get(i)));
+
+//				driverSetup.initDriver(appBrowserType, appUrlFromGlobalVars.get(i));
+			}
+
+		}
+		else if(appURLs.length==0)
+		{
+			for(int i=0;i<Integer.parseInt(appBrowserCount);i++)
+			{
+				appDrivers.add(driverSetup.initDriver(appBrowserType, globalVariables.get("defaultAppURL")));
+
+//				driverSetup.initDriver(appBrowserType, appUrlFromGlobalVars.get(i));
+			}
+		}
+
+	}
+
+	private void initChatBrowser(String chatBrowserType,String chatBrowserCount,String[] chatURLs)
+	{
+		DriverSetup driverSetup=new DriverSetup();
+
+		if(chatURLs.length>0)
+		{
+			if(Integer.parseInt(chatBrowserCount)!=chatURLs.length)
+			{
+
+				for(int k=0;k<=Integer.parseInt(chatBrowserCount);k++)
+				{
+					for(String chatURL:chatURLs)
+					{
+						chatUrlFromGlobalVars.add(globalVariables.get(chatURL));
+					}
+				}
+
+				for(int i=0;i<Integer.parseInt(chatBrowserCount);i++)
+				{
+					chatDrivers.add(driverSetup.initDriver(chatBrowserType, chatUrlFromGlobalVars.get(i)));
+
+//					driverSetup.initDriver(chatBrowserType, chatUrlFromGlobalVars.get(i));
+				}
+
+			}
+			else
+			{
+				for(String chatURL:chatURLs)
+				{
+					chatUrlFromGlobalVars.add(globalVariables.get(chatURL));
+				}
+				for(int i=0;i<Integer.parseInt(chatBrowserCount);i++)
+				{
+					chatDrivers.add(driverSetup.initDriver(chatBrowserType, chatUrlFromGlobalVars.get(i)));
+
+//					driverSetup.initDriver(chatBrowserType, chatUrlFromGlobalVars.get(i));
+				}
+			}
+		}
+	}
+
+	private boolean isDriverActive(WebDriver driver)
+	{
+		return ((RemoteWebDriver)driver).getSessionId()!=null;
+	}
+	
+	public void takeScreenshot(Method method)
+	{
+		
+	}
+}

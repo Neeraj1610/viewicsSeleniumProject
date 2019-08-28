@@ -1,0 +1,15 @@
+package pajeObjects.homePage;
+
+import org.openqa.selenium.WebDriver;
+
+/**
+ * Page object for home page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class HomePage {
+
+	// Initialize variables
+	private WebDriver driver;
+}

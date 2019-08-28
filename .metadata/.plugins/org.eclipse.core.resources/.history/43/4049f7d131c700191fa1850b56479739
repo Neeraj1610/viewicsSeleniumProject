@@ -1,0 +1,99 @@
+package com.myproject.file;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.annotations.DataProvider;
+
+import com.myproject.logging.testng.TestNGListener;
+
+public class ReadDataSourceFile {
+
+//	private String UNIQUE_DATACOLUMN="";
+	String filePath=TestNGListener.getAbsolutePathOfWorkSpace();
+	
+	@DataProvider(name="data-provider")
+	public Iterator readDataFromDataSourceFile(Method method)
+	{
+		
+		String methodName=method.getName();
+//		System.out.println("ANC"+methodName);
+		ArrayList<String> headerValue=new ArrayList<String>();
+		ArrayList<String> dataValue=new ArrayList<String>();
+		
+		methodName=methodName.replace("test", "")+".xlsx";
+		
+		filePath=this.filePath+"/../tutorialTestCaseFolder/datasource/"+methodName;
+		
+		
+		try{
+			FileInputStream fileInputStream=new FileInputStream(new File(filePath));	
+			
+			Workbook wb=new XSSFWorkbook(fileInputStream);
+//			System.out.println(methodName); 
+			
+			Sheet workingSheet=wb.getSheet(methodName.replace(".xlsx", ""));
+			
+			
+			for(int i=workingSheet.getFirstRowNum();i<=workingSheet.getLastRowNum();i++)
+			{
+				Row row=workingSheet.getRow(i);
+
+				for(int j=row.getFirstCellNum();j<=row.getLastCellNum()-1;j++)
+				{
+					if(i==workingSheet.getFirstRowNum())
+					{
+						headerValue.add(row.getCell(j).toString().trim());
+					}
+					else if(i!=workingSheet.getFirstRowNum())
+					{
+						dataValue.add(row.getCell(j).toString().trim());
+					}
+
+				}
+
+			}
+
+			//Handle unique data logic
+			int uniqueDataColumnIndex=headerValue.indexOf("UniqueDataColumns");
+			String[] uniqueDataColumns=dataValue.get(uniqueDataColumnIndex).split(",");
+
+			if(uniqueDataColumns.length!=0)
+			{
+				TestNGListener testNGListener=new TestNGListener();
+
+				for(int k=0;k<=uniqueDataColumns.length-1;k++)
+				{		
+					int uniqueDataVariableIndex=headerValue.indexOf(uniqueDataColumns[k]);
+					
+					String uniqueDataVariableValue=dataValue.get(uniqueDataVariableIndex);
+					
+					dataValue.remove(uniqueDataVariableIndex);
+					dataValue.add(uniqueDataVariableIndex, uniqueDataVariableValue+testNGListener.getUniqueString());
+				}
+			}
+			
+		}
+		catch(FileNotFoundException fileNotFound)
+		{
+			System.out.println(fileNotFound.getMessage());
+		} catch (IOException ioException) {
+			System.out.println(ioException.getMessage());
+		}
+		
+		Object[][] dataSourceData1={dataValue.toArray()};
+		
+		return dataValue.iterator();
+		
+				
+	}
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Base" parallel="none">
+
+	<!-- Set browser type & application URL -->
+	<parameter name="appURL"
+		value="https://google.xom" />
+	<parameter name="appBrowserType" value="chrome" />
+
+	<!-- Set parameters to send emails -->
+	<parameter name="runReportEmailHost" value="10.10.20.124" />
+	<parameter name="sendMailFrom" value="myproject@abc.com" />
+	<parameter name="sendMailTo" value="amaheshwari@egain.com" />
+
+	<!-- Rest sevice to generate unique string -->
+	<parameter name="uniqueDataGenProduct" value="Base" />
+	<parameter name="uniqueDataGenRestService"
+		value="http://emeaTestmanager.egeng.info:8090/QAAdministration/rest/GenerateNextNumberWithPrefix?prefix=" />
+
+	<!-- Valid values for egainActiveDatabaseAuthType are Windows and SQL -->
+	<parameter name="egainActiveDatabaseAuthType" value="SQL" />
+	<parameter name="egainActiveDatabaseHost" value="ussuhvin0157.egeng.info\MSSQLENT16" />
+	<parameter name="egainActiveDatabaseName" value="eGActiveDB_Auto" />
+	<parameter name="egainActiveDatabaseUsername" value="sa" />
+	<parameter name="egainActiveDatabasePassword" value="egain@123" />
+
+	<listeners>
+		<listener class-name="com.myproject.logging.testng.TestNGListener"></listener>
+		<!-- <listener class-name="${basedir}+com.myproject.loggin.testng.TestNGListener"></listener> -->
+	</listeners>
+
+	<suite-files>
+		<suite-file path="./test-suites/My-Project.xml"></suite-file>
+	</suite-files>
+
+</suite>

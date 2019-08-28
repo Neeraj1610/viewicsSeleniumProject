@@ -1,0 +1,19 @@
+package com.myproject.annotation;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ProjectCustomAnnotation {
+
+	int totalAppBrowserCount() default 1;
+
+	boolean isAppBrowserNeeded() default true;
+
+	boolean isExecuteBeforeMethodNeeded() default true;
+
+	boolean isExecuteAfterMethodNeeded() default true;
+
+	String[] appBrowserURL() default {};
+
+}

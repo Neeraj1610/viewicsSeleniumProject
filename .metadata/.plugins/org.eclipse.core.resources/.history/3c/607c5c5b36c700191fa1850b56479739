@@ -1,0 +1,12 @@
+package pajeObjects.homePage;
+
+/**
+ * Page object for home page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class HomePage {
+
+	// Initialize variables
+}

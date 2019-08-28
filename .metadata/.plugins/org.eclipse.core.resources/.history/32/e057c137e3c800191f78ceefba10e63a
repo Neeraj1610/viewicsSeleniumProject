@@ -1,0 +1,73 @@
+package com.myproject.tutorialTestCaseFolder;
+
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+
+import com.myproject.annotation.ProjectCustomAnnotation;
+import com.myproject.database.DataBaseUtils;
+import com.myproject.file.ReadDataSourceFile;
+import com.myproject.framework.BaseTestSetup;
+import com.myproject.logging.testng.TestNGListener;
+
+import pajeObjects.homePage.CheckoutPagePajeObject;
+import pajeObjects.homePage.HomePage;
+import pajeObjects.homePage.SearchResultPageObject;
+
+public class TC01_LoginFunctionalityTest extends BaseTestSetup{
+
+	@Test
+	@ProjectCustomAnnotation(totalAppBrowserCount=1)
+	public void testTC01_LoginFunctionality() throws Exception
+	{
+		WebDriver appDriver=appDrivers.get(0);
+
+		Thread.sleep(4000);
+		String agentUserName=globalVariables.get("ML_AGENT1_USERNAME");
+		String agentPassword=globalVariables.get("ML_AGENT1_PASSWORD");
+
+		Thread.sleep(4000);
+		//Login with driver1 instance
+		 HomePage homePage=new HomePage(appDriver);
+		 SearchResultPageObject searchResultPageObject = new SearchResultPageObject(appDriver);
+		 CheckoutPagePajeObject checkoutPagePajeObject = new CheckoutPagePajeObject(appDriver);
+		 
+		 SoftAssert softAssert = new SoftAssert();
+		 
+		 try{
+			 // Check myntra pade loaded
+			 softAssert.assertTrue(homePage.myntraHomePageLoaded(), "Home page not loaded.");
+			 
+			 // Enter Text in search
+			 homePage.enterSearchText("Jeans");
+			 
+			 homePage.selectItemFromAutoSuggestSearchBox("Jeans Jacket Women");
+			 
+			 searchResultPageObject.applyFliters("Van Heusen Woman", "", "32");
+			 
+			 searchResultPageObject.addItemToBag("32");
+			 
+			 // verify item added to bag toat msg present
+			 boolean isAddedToBagToastMsgPresent = searchResultPageObject.isAddedToBagToastMsgPresent();
+			 softAssert.assertTrue(isAddedToBagToastMsgPresent, "'Added to bag' toast message not present");
+			 
+			 // Verify counter updated
+			 String bagCounter = searchResultPageObject.verifyBagCounterUpdated();
+			 softAssert.assertEquals("1", bagCounter);
+			 
+			 // Click on Checkout Cart icon
+			 searchResultPageObject.clickOnCheckOutCartIcon();
+			 
+			 // Verify no of items in cart on checkout page
+			 String noOfItems = checkoutPagePajeObject.verifyItemCounterOnCheckoutPage();
+			 softAssert.assertTrue(noOfItems.contains(bagCounter), "Wrong no of item in cart");
+			 
+			 Thread.sleep(10000);
+			 
+			 softAssert.assertAll();
+		 }catch(Exception ex){
+			 throw ex;
+		 }
+
+	}
+}

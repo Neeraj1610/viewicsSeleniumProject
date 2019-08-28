@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="My-Project Suite" duration-ms="59704" started-at="2019-08-28T09:37:30Z" finished-at="2019-08-28T09:38:29Z">
+    <groups>
+    </groups>
+    <test name="My-Project" duration-ms="59704" started-at="2019-08-28T09:37:30Z" finished-at="2019-08-28T09:38:29Z">
+      <class name="com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest">
+        <test-method status="PASS" signature="initBrowser(java.lang.String, java.lang.String, java.lang.reflect.Method)[pri:0, instance:com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest@14bf9759]" name="initBrowser" is-config="true" duration-ms="9329" started-at="2019-08-28T15:07:30Z" finished-at="2019-08-28T15:07:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[https://google.xom]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[public void com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest.testTC01_MyntraFunctionality() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- initBrowser -->
+        <test-method status="PASS" signature="testTC01_MyntraFunctionality()[pri:0, instance:com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest@14bf9759]" name="testTC01_MyntraFunctionality" duration-ms="48265" started-at="2019-08-28T15:07:39Z" finished-at="2019-08-28T15:08:27Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testTC01_MyntraFunctionality -->
+        <test-method status="PASS" signature="tearDownDrivers(java.lang.reflect.Method)[pri:0, instance:com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest@14bf9759]" name="tearDownDrivers" is-config="true" duration-ms="2082" started-at="2019-08-28T15:08:27Z" finished-at="2019-08-28T15:08:29Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest.testTC01_MyntraFunctionality() throws java.lang.Exception]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownDrivers -->
+      </class> <!-- com.myproject.tutorialTestCaseFolder.TC01_MyntraFunctionalityTest -->
+    </test> <!-- My-Project -->
+  </suite> <!-- My-Project Suite -->
+  <suite name="Base" duration-ms="0" started-at="2019-08-28T09:38:31Z" finished-at="2019-08-28T09:38:31Z">
+    <groups>
+    </groups>
+  </suite> <!-- Base -->
+</testng-results>

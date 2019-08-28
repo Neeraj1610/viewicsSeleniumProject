@@ -1,0 +1,285 @@
+package com.myproject.logging.testng;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.testng.IRetryAnalyzer;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
+import org.testng.ISuiteResult;
+import org.testng.ITestContext;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+
+import com.myproject.basepageobject.BasePageObject;
+import com.myproject.email.SendMail;
+import com.myproject.email.SendMail.EmailType;
+import com.myproject.extentreport.ExtentReport;
+import com.myproject.file.PropertyFile;
+import com.myproject.tutorial.log4j.Log4jLogger;
+import com.myproject.uniquedata.GenerateUniqueData;
+
+public class TestNGListener implements ITestListener,ISuiteListener,IRetryAnalyzer{
+
+	//Get current class with package name
+	private String currentClassWithPackage=this.getClass().getName()+".";
+
+	//Define constants
+	private final String TESTNG_PARAM_UNIQUE_DATA_GENERATION_REST_SERVICE="uniqueDataGenRestService";
+	private final String TESTNG_PARAM_UNIQUE_DATA_GENERATION_FOR_PRODUCT="uniqueDataGenProduct";
+	public  final String SQL_DRIVER="com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	private static String DB_URL="";
+	private static String DB_USER="";
+	private static String DB_PASSWORD="";
+	private final String HOST_NAME="runReportEmailHost";
+	private String FROM_ADDRESS="sendMailFrom";
+	private String TO_ADDRESS="sendMailTo";
+	private static String UNIQUE_STRING="";
+	public static String CURRENT_PROJECT_PATH=System.getProperty("user.dir");
+	private final String PROPERTY_FILE_PATH="/../tutorialTestCaseFolder/datasource/globalvars.properties";
+	public static HashMap<String, String> GLOBAL_VARS=new HashMap<String, String>();
+	private ExtentReport extentReport=new ExtentReport();
+
+	public void onFinish(ISuite suite) {
+
+		//Send report email
+		try {
+			//logAndEmailTestResult(suite);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		extentReport.logExtentReport();
+
+		//Close sql connection
+		//		DriverManager.c
+
+	}
+
+	public void onStart(ISuite suite) {
+		Log4jLogger.info(currentClassWithPackage+" onStart");
+
+		//Fetch DB details
+		DB_URL="jdbc:sqlserver://"+suite.getParameter("eActiveDatabaseHost")+":49484; databaseName="+suite.getParameter("eActiveDatabaseName");
+
+		DB_USER=suite.getParameter("eActiveDatabaseUsername");
+
+		DB_PASSWORD=suite.getParameter("eActiveDatabasePassword");
+
+		//		System.out.println("Testing method: "+suite.getXmlSuite().);
+
+		extentReport.intializeExtentReportAndStartTest(CURRENT_PROJECT_PATH+"\\test-output\\Logs\\extentReport.html", true, "TC01_MyntraFunctionalityTest", "This is test");
+
+		//Proceed only if testsuite has testcase
+		if(suite.getAllMethods().size()>0)
+		{
+
+			//Generate unique string
+			try{
+
+				GenerateUniqueData genUniqueData=new GenerateUniqueData();
+
+				UNIQUE_STRING=genUniqueData.generateUniqueString(suite.getParameter(TESTNG_PARAM_UNIQUE_DATA_GENERATION_REST_SERVICE)+suite.getParameter(TESTNG_PARAM_UNIQUE_DATA_GENERATION_FOR_PRODUCT));
+
+			}
+			catch(Exception ex)
+			{
+				System.out.println("Failed to generate unqiue string");
+			}
+
+			//Connect to DB
+			try{
+				//				Class.forName(SQL_DRIVER);
+				//				DriverManager.getConnection(dbURL, dbUser, dbPassword);
+				//				DB_URL=dbURL+","+dbUser+","+dbPassword;
+			}
+			catch(Exception ex)
+			{
+				System.out.println(ex.getMessage());
+			}
+
+			try {
+				//Read property file
+				PropertyFile propertyFile=new PropertyFile();
+				GLOBAL_VARS=propertyFile.readPropertyFile(new File(CURRENT_PROJECT_PATH+PROPERTY_FILE_PATH));
+				//				System.out.println(GLOBAL_VARS);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		else
+		{
+			Log4jLogger.warn("No testcase found in Testsuite "+suite.getName());
+		}
+
+	}
+
+	public void onFinish(ITestContext arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onStart(ITestContext arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTestFailure(ITestResult result) {
+
+		String methodName=result.getMethod().toString();
+
+		String methodNameFormatted=methodName.substring(0, methodName.indexOf("."));
+
+		BasePageObject basePageObject=new BasePageObject();
+		System.out.println("Current: "+CURRENT_PROJECT_PATH);
+		try {
+			basePageObject.takeScreenShot(CURRENT_PROJECT_PATH+"\\test-output\\Logs\\"+methodNameFormatted+".png");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void onTestSkipped(ITestResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTestStart(ITestResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void onTestSuccess(ITestResult arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	//	private void logAndEmailTestResult(ISuite suite, int totalTestCase, int passedTestCases, int FailedTestCases, int skippedTestCase)
+	private void logAndEmailTestResult(ISuite suite) throws Exception
+	{
+
+		//Get suite name
+		String suiteName=suite.getName();
+
+		//Initialize filesToUpload arraylist
+		ArrayList<File> fileToUpload=new ArrayList<File>();
+
+		//Fetch details
+		String hostName=suite.getParameter(HOST_NAME);
+		String toAddress=suite.getParameter(TO_ADDRESS);
+		String fromAddress=suite.getParameter(FROM_ADDRESS);
+
+				//long testngStartTime=Long.MAX_VALUE;
+				//long testngEndTime=Long.MIN_VALUE;
+
+		//Log result
+				/*Log4jLogger.info("Total TCs: "+totalTestCase+" in test suite "+suiteName);		
+				Log4jLogger.info("Passed TCs: "+passedTestCases);
+				Log4jLogger.info("Failed TCs: "+FailedTestCases);
+				Log4jLogger.info("Skipped TCs: "+skippedTestCase);
+*/
+		//Get hostname
+		//		String machineHostName;		
+		//		try{
+		//			machineHostName="Machine Hostname: "+InetAddress.getLocalHost().getCanonicalHostName();	
+		//		}
+		//		catch(UnknownHostException ex)
+		//		{
+		//			System.out.println(ex.getMessage());
+		//		}
+
+		//Fetch suite result
+		Map<String, ISuiteResult> testResults =	suite.getResults();
+
+		for(ISuiteResult suiteResults: testResults.values())
+		{
+			ITestContext testContext=suiteResults.getTestContext();
+
+			//Get test name
+			String testName=testContext.getName();
+
+			//Get count of passed, failed & skipped test case
+			int passedTestCase=	testContext.getPassedTests().size();
+			int failedTestCase=	testContext.getFailedTests().size();
+			int skippdTestCase= testContext.getSkippedTests().size();
+
+			//Add files to list
+			fileToUpload.add(new File(suite.getOutputDirectory()+"//"+testName+".html"));
+
+			//Fetch start & end date & time of test
+			long testngStartTime=testContext.getStartDate().getTime();
+			long testngEndTime=testContext.getEndDate().getTime();
+
+			//Fetch execution time
+			long executionTime=testngEndTime-testngStartTime;
+
+			//Convert seconds to hh:mm:ss format--ToDo
+
+			//Create text to send through email
+			String emailBodyText="Suite Name:"+suiteName+" Total TC: "+(passedTestCase+failedTestCase+skippdTestCase)
+					+" Passed TC: "+passedTestCase+" Failed TC: "+failedTestCase+" Skipped TC: "+skippdTestCase+" Total Execution Time: "+executionTime;
+
+
+			SendMail sendMail=new SendMail();
+			sendMail.sendMailAsHtmlOrText(hostName, fromAddress, toAddress, "Execution Report for: "+suiteName, EmailType.TEXT, emailBodyText);
+
+		}
+
+	}
+
+	public String getUniqueString()
+	{
+		//		Log4jLogger.info("Return Unique String as: "+UNIQUE_STRING);
+
+		return UNIQUE_STRING;
+	}
+
+	public static String getAbsolutePathOfWorkSpace()
+	{
+		return System.getProperty("user.dir");
+	}
+
+	public Statement establishDBConnection() throws ClassNotFoundException, SQLException
+	{
+		//		return DB_URL;
+		Class.forName(SQL_DRIVER);
+
+		Connection connection=DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+		Statement statement=connection.createStatement();
+
+		return statement;
+
+	}
+
+	@Override
+	public boolean retry(ITestResult result){
+		int retryCount=2;
+		int counter=0;
+
+		if(counter<retryCount)
+		{
+			counter++;
+			return true;
+		}
+		return false;
+	}
+}

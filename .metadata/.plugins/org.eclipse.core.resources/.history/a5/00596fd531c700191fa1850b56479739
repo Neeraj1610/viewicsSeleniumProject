@@ -1,0 +1,38 @@
+package com.myproject.file;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
+
+import com.myproject.tutorial.log4j.Log4jLogger;
+
+public class PropertyFile {
+
+	public static HashMap<String, String> readPropertyFile(File propertyFile) throws IOException
+	{
+		Log4jLogger.info("Read property file");
+		
+		//Initialize hashmap to store property name & value
+		HashMap<String, String> propertyInFile=new HashMap<String, String>();
+		
+		//Read property file
+		FileInputStream inputFile=new FileInputStream(propertyFile);
+		Properties properties=new Properties();
+		properties.load(inputFile);
+		
+		Enumeration<Object> enumerator=properties.keys();
+		
+		while(enumerator.hasMoreElements())
+		{
+			String propertyName=(String) enumerator.nextElement();
+			String propertyValue=properties.getProperty(propertyName);
+			
+			propertyInFile.put(propertyName, propertyValue);
+		}
+		
+		return propertyInFile;
+	}
+}

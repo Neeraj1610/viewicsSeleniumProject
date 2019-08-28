@@ -1,0 +1,80 @@
+package com.myproject.tutorialSeleniumFramework.driver;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import com.myproject.logging.testng.TestNGListener;
+import com.myproject.tutorial.log4j.Log4jLogger;
+
+public class DriverSetup {
+
+	//Define instance variables
+	private final String currentProjectPath=TestNGListener.CURRENT_PROJECT_PATH;
+	private final String libFolderPath="/../lib/selenium/seleniumDrivers";
+	private String CHROME_DRIVER_PATH="";
+	private String FIREFOX_DRIVER_PATH="";
+
+	private final String chromeDriverPackage="webdriver.chrome.driver";
+	private final String firefoxDriverPackage="webdriver.gecko.driver";
+
+	//Initialize driver
+	WebDriver driver;
+
+	public DriverSetup()
+	{
+		CHROME_DRIVER_PATH=currentProjectPath+libFolderPath+"/chrome/chromedriver_win32-2.36/chromedriver.exe";
+		FIREFOX_DRIVER_PATH=currentProjectPath+libFolderPath+"/firefox/geckodriver-v0.14.0-win64/geckodriver.exe";
+	}
+
+	private enum drivers{
+		CHROME("Chrome"),FIREFOX("Firefox");
+
+		private final String driverValue;
+
+		private drivers(String driverName)
+		{
+			driverValue=driverName;
+		}
+	}
+
+	public WebDriver initDriver(String driverName,String appURL)
+	{
+		Log4jLogger.info("Initializing: "+driverName+" browser");
+
+		if(driverName.equals(drivers.CHROME.driverValue))
+		{
+			//Invoke chrome driver
+			System.setProperty(chromeDriverPackage, CHROME_DRIVER_PATH);
+
+			//Set chrome options
+			ChromeOptions chromeOptions=new ChromeOptions();
+
+			chromeOptions.addArguments("disable-infobars");
+			chromeOptions.addArguments("--start-maximized");
+
+			//Initialize chrome driver
+			driver=new ChromeDriver(chromeOptions);
+
+			//			driver.manage().window().maximize();
+
+			driver.get(appURL);
+
+		}
+		else if(driverName.equals(drivers.FIREFOX.driverValue))
+		{
+			//Invoke firefox driver
+			System.setProperty(firefoxDriverPackage, FIREFOX_DRIVER_PATH);
+
+			//Initialize firefox driver
+			driver=new FirefoxDriver();
+			driver.manage().window().maximize();
+
+			driver.get(appURL);
+		}
+
+		//Return driver
+		return driver;
+	}
+}

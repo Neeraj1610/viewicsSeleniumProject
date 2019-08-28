@@ -1,0 +1,36 @@
+package pajeObjects.homePage;
+
+import java.util.ArrayList;
+
+import org.openqa.selenium.WebDriver;
+
+import com.myproject.basepageobject.BasePageObject;
+
+import myntraRepository.MyntraRepository;
+
+/**
+ * Page object for home page operations.
+ * 
+ * @author nadhikari
+ *
+ */
+public class HomePage {
+
+	// Declare page objects
+	BasePageObject basePageObject;
+	
+	// Declare repository objects
+	MyntraRepository myntraRepository;
+	
+	// Declare dynamic locator list
+    ArrayList<String> dynamicLocatorList;
+    
+    public HomePage(WebDriver driver){
+    	basePageObject = new BasePageObject(driver);
+    	myntraRepository = new MyntraRepository(driver);
+    }
+    
+    public boolean myntraHomePageLoaded(){
+    	return basePageObject.isElementPresent(myntraRepository.myntraLogoXpath, "");
+    }
+}

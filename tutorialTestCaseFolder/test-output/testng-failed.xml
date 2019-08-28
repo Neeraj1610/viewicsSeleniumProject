@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [My-Project Suite]">
+  <parameter name="sendMailFrom" value="myproject@abc.com"/>
+  <parameter name="sendMailTo" value="nadhikari@egain.com"/>
+  <parameter name="runReportEmailHost" value="10.10.20.124"/>
+  <parameter name="egainActiveDatabasePassword" value="egain@123"/>
+  <parameter name="egainActiveDatabaseHost" value="ussuhvin0157.egeng.info\MSSQLENT16"/>
+  <parameter name="egainActiveDatabaseName" value="eGActiveDB_Auto"/>
+  <parameter name="egainActiveDatabaseUsername" value="sa"/>
+  <parameter name="appURL" value="https://google.xom"/>
+  <parameter name="appBrowserType" value="chrome"/>
+  <parameter name="uniqueDataGenProduct" value="Base"/>
+  <parameter name="uniqueDataGenRestService" value="http://emeaTestmanager.egeng.info:8090/QAAdministration/rest/GenerateNextNumberWithPrefix?prefix="/>
+  <parameter name="egainActiveDatabaseAuthType" value="SQL"/>
+  <listeners>
+    <listener class-name="com.myproject.logging.testng.TestNGListener"/>
+  </listeners>
+  <test name="My-Project(failed)">
+    <classes>
+      <class name="com.myproject.tutorialTestCaseFolder.TC01_LoginFunctionalityTest">
+        <methods>
+          <include name="testTC01_LoginFunctionality"/>
+        </methods>
+      </class> <!-- com.myproject.tutorialTestCaseFolder.TC01_LoginFunctionalityTest -->
+    </classes>
+  </test> <!-- My-Project(failed) -->
+</suite> <!-- Failed suite [My-Project Suite] -->

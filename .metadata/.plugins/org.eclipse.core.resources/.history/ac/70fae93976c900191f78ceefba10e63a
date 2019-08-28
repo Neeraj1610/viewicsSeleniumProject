@@ -1,0 +1,24 @@
+package com.myproject.database;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.myproject.logging.testng.TestNGListener;
+
+public class DataBaseUtils {
+
+	TestNGListener testNGListener=new TestNGListener();
+
+	public void isUserPresent(String userName) throws ClassNotFoundException, SQLException
+	{
+
+		// TO DO
+		ResultSet resultSet=testNGListener.establishDBConnection().executeQuery("SELECT * FROM EGPL_USER WHERE USER_NAME='"+userName+"'");
+
+
+		while(resultSet.next())
+		{
+			System.out.println("DB "+resultSet.getString("USER_ID"));			
+		}
+	}		
+}
